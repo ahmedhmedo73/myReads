@@ -10,17 +10,17 @@ function App() {
   const [update, setUpdate] = useState(true);
 
   const updateShelf = (book, selectedShelf) => {
-    const getUpdate = async ()=> {
-      const res = await BooksAPI.update(book,selectedShelf);
-      if(res)
-      setUpdate(true);
-    } 
+    const getUpdate = async () => {
+      const res = await BooksAPI.update(book, selectedShelf);
+      if (res)
+        setUpdate(true);
+    }
     getUpdate();
   }
-  
+
   useEffect(() => {
     let mounted = true;
-    if(mounted&update){
+    if (mounted & update) {
       const getBooks = async () => {
         const res = await BooksAPI.getAll();
         setBooks(res);
@@ -28,18 +28,18 @@ function App() {
       setUpdate(false);
       getBooks();
     }
-    return () =>{
+    return () => {
       mounted = false;
     }
-  },[update]);
+  }, [update]);
 
   return (
     <Routes>
       <Route exact path="/search" element={
-        <SearchBooks data={books}  updateShelf={updateShelf}/>
+        <SearchBooks data={books} updateShelf={updateShelf} />
       }></Route>
       <Route exact path="/" element={
-        <ListBooks data={books} updateShelf={updateShelf}/>
+        <ListBooks data={books} updateShelf={updateShelf} />
       }></Route>
     </Routes>
   );
