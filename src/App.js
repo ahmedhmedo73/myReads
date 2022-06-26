@@ -7,23 +7,39 @@ import SearchBooks from "./SearchBooks";
 import ListBooks from "./ListBooks";
 function App() {
   const [books, setBooks] = useState([]);
+  const [update, setUpdate] = useState(true);
+
   const updateShelf = (book, selectedShelf) => {
-    BooksAPI.update(book,selectedShelf);
+    const getUpdate = async ()=> {
+      const res = await BooksAPI.update(book,selectedShelf);
+      if(res)
+      setUpdate(true);
+    } 
+    getUpdate();
   }
+  
   useEffect(() => {
-    const getBooks = async () => {
-      const res = await BooksAPI.getAll();
-      setBooks(res);
+    let mounted = true;
+    if(mounted&update){
+      const getBooks = async () => {
+        const res = await BooksAPI.getAll();
+        setBooks(res);
+      }
+      setUpdate(false);
+      getBooks();
     }
-    getBooks();
-  });
+    return () =>{
+      mounted = false;
+    }
+  },[update]);
+
   return (
     <Routes>
       <Route exact path="/search" element={
-        <SearchBooks books={books}  updateShelf={updateShelf}/>
+        <SearchBooks data={books}  updateShelf={updateShelf}/>
       }></Route>
       <Route exact path="/" element={
-        <ListBooks books={books} updateShelf={updateShelf}/>
+        <ListBooks data={books} updateShelf={updateShelf}/>
       }></Route>
     </Routes>
   );
