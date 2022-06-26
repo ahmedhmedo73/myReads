@@ -1,15 +1,26 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Book from "./Book";
-const SearchBooks = ({ books,updateShelf }) => {
+import * as BooksAPI from "./BooksAPI";
+
+const SearchBooks = ({ updateShelf }) => {
     const [word, setWord] = useState("");
+    const [books, setBooks] = useState([]);
     const handleChange = (event) => {
         setWord(event);
     }
+    useEffect(() => {
+        if(word){
+            const seachBook = async () => {
+                const res = await BooksAPI.search(word, "16");
+                setBooks(res);
+            }
+            seachBook();
+        }
+    }, [word]);
     return (
         <div className="main">
-
             <div className="search-books">
                 <div className="search-books-bar">
                     <Link
@@ -33,15 +44,13 @@ const SearchBooks = ({ books,updateShelf }) => {
             </div>
             <div className="bookshelf-books">
                 <ol className="books-grid">
-                    {books
-                        .filter(book => book.title.toLowerCase().includes(word.toLocaleLowerCase()))
-                        .map(book => {
-                            return (
-                                <div key={book.id}>
-                                    <Book book={book} updateShelf={updateShelf}/>
-                                </div>
-                            )
-                        })}
+                    {books?.error? undefined : books?.map(book => {
+                        return (
+                            <div key={book.id}>
+                                <Book data={book} updateShelf={updateShelf} />
+                            </div>
+                        )
+                    })}
                 </ol>
             </div>
         </div>
