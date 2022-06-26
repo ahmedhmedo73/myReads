@@ -17,6 +17,8 @@ const SearchBooks = ({ updateShelf }) => {
                 setBooks(res);
             }
             seachBook();
+        }else {
+            setBooks([])
         }
     }, [word]);
     return (
